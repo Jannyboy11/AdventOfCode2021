@@ -29,30 +29,38 @@ type Board = List[List[Int]]
 @main def main: Unit = {
 
     val (result1, result2) = {
-        var score1 = 0;
-        var score2 = 0
         var draws: Set[Int] = Set[Int]()
+        var score1 = 0
+        var score2 = 0
         for (draw <- randomNumbers) {
-            draws += draw
-            boards.map(board => bingo(board, draws)).max match {
+            val bingos = boards.map(board => bingo(board, draws, draw))
+            bingos.max match {
                 case Some(sum) =>
                     val score = sum * draw
-                    if (score > 0) {
-                        if (score1 == 0) score1 = score
-                        score2 = score
-                    }
+                    if (score > 0 && score1 == 0) score1 = score
+                    if (score > 0) score2 = score
                 case None => ()
             }
+
+            draws += draw
         }
         (score1, score2)
     }
     println(result1)
-    println(result2)
+    println(result2) //583 is too low. 4408 is incorrect (but it didn't say too low or too high).
 
 }
 
-def bingo(board: Board, draws: Set[Int]): Option[Int] =
-    if (board.exists(_.forall(draws.contains)) || board.transpose.exists(_.forall(draws.contains)))
-        Some(board.flatten.toSet.diff(draws).sum)
-    else
-        None
+def bingo(board: Board, draws: Set[Int], draw: Int): Option[Int] =
+    def go(board: Board, draws: Set[Int]): Option[Int] = {
+        if (board.exists(_.forall(draws.contains)) || board.transpose.exists(_.forall(draws.contains)))
+            Some(board.flatten.toSet.diff(draws).sum)
+        else
+            None
+    }
+
+    (go(board, draws), go(board, draws + draw)) match {
+        case (None, Some(sum)) => Some(sum)
+        case _ => None
+    }
+
