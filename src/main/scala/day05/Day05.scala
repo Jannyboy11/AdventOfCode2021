@@ -19,29 +19,9 @@ extension (grid: Grid)
 
 @main def main: Unit = {
 
-    val result1 = {
+    def solve(filter: Line => Boolean): Int = {
         var grid: Grid = Map.empty.withDefault(_ => 0)
-        for (Line(Point(lx, ly), Point(rx, ry)) <- input if lx == rx || ly == ry) {
-            val xStep = Integer.compare(rx, lx)
-            val yStep = Integer.compare(ry, ly)
-            if (xStep != 0) {
-                for (x <- lx to rx by xStep) {
-                    grid = grid.paint(x, ly)
-                }
-            }
-            if (yStep != 0) {
-                for (y <- ly to ry by yStep) {
-                    grid = grid.paint(lx, y)
-                }
-            }
-        }
-        grid.count { case (point, count) => count >= 2 }
-    }
-    println(result1)
-
-    val result2 = {
-        var grid: Grid = Map.empty.withDefault(_ => 0)
-        for (Line(p1@Point(x1, y1), p2@Point(x2, y2)) <- input) {
+        for (line@Line(p1@Point(x1, y1), p2@Point(x2, y2)) <- input if filter(line)) {
             val (xStart, xEnd, xStep) = if x1 > x2 then (x2, x1, -1) else if x1 < x2 then (x1, x2, 1) else (x1, x2, 0)
             val (yStart, yEnd, yStep) = if y1 > y2 then (y2, y1, -1) else if y1 < y2 then (y1, y2, 1) else (y1, y2, 0)
             val points = LazyList.iterate(p1) { case Point(x, y) => Point(x + xStep, y + yStep) }.takeWhile(_ != p2).appended(p2)
@@ -51,6 +31,11 @@ extension (grid: Grid)
         }
         grid.count { case (point, count) => count >= 2 }
     }
-    println(result2) //911454 is too high, 19518 is not the right answer.
+
+    val result1 = solve { case Line(Point(x1, y1), Point(x2, y2)) => x1 == x2 || y1 == y2 }
+    println(result1)
+
+    val result2 = solve { line => true }
+    println(result2)
 
 }
