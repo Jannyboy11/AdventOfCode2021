@@ -41,13 +41,12 @@ type Board = List[List[Int]]
                     if (score > 0) score2 = score
                 case None => ()
             }
-
             draws += draw
         }
         (score1, score2)
     }
     println(result1)
-    println(result2) //583 is too low. 4408 is incorrect (but it didn't say too low or too high).
+    println(result2)
 
 }
 
