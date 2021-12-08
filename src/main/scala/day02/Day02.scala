@@ -23,15 +23,16 @@ object Direction:
 case class Instruction(direction: Direction, amount: Int)
 
 @main def main: Unit = {
+    import Direction.{Forward, Down, Up}
 
     val result1 = {
         var horizontal = 0
         var vertical = 0
         for (Instruction(direction, amount) <- input) {
             direction match {
-                case Direction.Forward => horizontal += amount
-                case Direction.Down => vertical -= amount
-                case Direction.Up => vertical += amount
+                case Forward => horizontal += amount
+                case Down => vertical -= amount
+                case Up => vertical += amount
             }
         }
         horizontal * -vertical

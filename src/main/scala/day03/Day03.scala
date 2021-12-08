@@ -14,7 +14,7 @@ val input = source.getLines.toList.map(_.toList)
         val gammaChars = new Array[Char](len)
         for (i <- 0 until len) {
             val counts = count(transposed(i));
-            gammaChars(i) = max(counts)
+            gammaChars(i) = counts.maxBy(_._2)._1
         }
         val epsilonChars = gammaChars.map(inverse)
         val gamma = Integer.parseUnsignedInt(gammaChars.mkString, 2)
@@ -46,25 +46,15 @@ val input = source.getLines.toList.map(_.toList)
 
 }
 
-def mostCommon(counts: Map[Char, Int]): Char = {
-    val zeroes = counts('0')
-    val ones = counts('1')
-    if (zeroes > ones) '0' else '1'
-}
+def mostCommon(counts: Map[Char, Int]): Char =
+    if (counts('0') > counts('1')) '0' else '1'
 
-def leastCommon(counts: Map[Char, Int]): Char = {
-    val zeroes = counts('0')
-    val ones = counts('1')
-    if (ones < zeroes) '1' else '0'
-}
+def leastCommon(counts: Map[Char, Int]): Char =
+    if (counts('1') < counts('0')) '1' else '0'
 
 def inverse(c: Char): Char = c match {
     case '0' => '1'
     case '1' => '0'
-}
-
-def max[A](counts: Map[A, Int]): A = {
-    counts.maxBy(_._2)._1
 }
 
 def count[A](input: Iterable[A]): Map[A, Int] = {
