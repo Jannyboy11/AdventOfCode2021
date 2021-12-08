@@ -45,9 +45,9 @@ case class Instruction(direction: Direction, amount: Int)
         var horizontal = 0;
         for (Instruction(direction, amount) <- input) {
             direction match {
-                case Direction.Down => aim += amount
-                case Direction.Up => aim -= amount
-                case Direction.Forward =>
+                case Down => aim += amount
+                case Up => aim -= amount
+                case Forward =>
                     horizontal += amount
                     depth += aim * amount
             }

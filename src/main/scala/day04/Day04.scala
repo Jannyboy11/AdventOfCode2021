@@ -51,15 +51,13 @@ type Board = List[List[Int]]
 }
 
 def bingo(board: Board, draws: Set[Int], draw: Int): Option[Int] =
-    def go(board: Board, draws: Set[Int]): Option[Int] = {
+    def go(board: Board, draws: Set[Int]): Option[Int] =
         if (board.exists(_.forall(draws.contains)) || board.transpose.exists(_.forall(draws.contains)))
             Some(board.flatten.toSet.diff(draws).sum)
         else
             None
-    }
 
     (go(board, draws), go(board, draws + draw)) match {
         case (None, Some(sum)) => Some(sum)
         case _ => None
     }
-
