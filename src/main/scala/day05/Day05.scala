@@ -22,8 +22,8 @@ extension (grid: Grid)
     def solve(filter: Line => Boolean): Int = {
         var grid: Grid = Map.empty.withDefault(_ => 0)
         for (line@Line(p1@Point(x1, y1), p2@Point(x2, y2)) <- input if filter(line)) {
-            val (xStart, xEnd, xStep) = if x1 > x2 then (x2, x1, -1) else if x1 < x2 then (x1, x2, 1) else (x1, x2, 0)
-            val (yStart, yEnd, yStep) = if y1 > y2 then (y2, y1, -1) else if y1 < y2 then (y1, y2, 1) else (y1, y2, 0)
+            val xStep = if x1 > x2 then -1 else if x1 < x2 then 1 else 0
+            val yStep = if y1 > y2 then -1 else if y1 < y2 then 1 else 0
             val points = LazyList.iterate(p1) { case Point(x, y) => Point(x + xStep, y + yStep) }.takeWhile(_ != p2).appended(p2)
             for (p <- points) {
                 grid = grid.paint(p)
