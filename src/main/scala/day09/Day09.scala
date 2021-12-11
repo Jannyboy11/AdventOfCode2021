@@ -48,14 +48,13 @@ def higherPoints(y: Int, x: Int, map: Array[Array[Int]]): Set[(Int, Int)] = {
     val basins: mutable.Map[(Int, Int), mutable.Set[(Int, Int)]] = new mutable.HashMap[(Int, Int), mutable.Set[(Int, Int)]]()
     def explore(lowPoint: (Int, Int)): Unit = {
         basins.put(lowPoint, mutable.Set(lowPoint))
-        def exp(y: Int, x: Int): Unit = {
-            basins(lowPoint).add((y, x))
-            for (highPoint@(hY, hX) <- higherPoints(y, x, input)) {
+        def exp(point: (Int, Int)): Unit = {
+            basins(lowPoint).add(point)
+            for (highPoint@(hY, hX) <- higherPoints(point._1, point._2, input)) {
                 exp(hY, hX)
             }
         }
-        val (lpY, lpX) = lowPoint
-        higherPoints(lpY, lpX, input).foreach { case (y, x) => exp(y, x) }
+        higherPoints(lowPoint._1, lowPoint._2, input).foreach(exp)
     }
     lowPoints.foreach(explore)
     val result2 = basins.values.toList.sortBy(-_.size).take(3).map(_.size).product
