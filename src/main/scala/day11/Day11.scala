@@ -74,7 +74,7 @@ def step(octopuses: Octopuses): (Octopuses, Int) = {
 @main def main: Unit = {
 
     val result1 = go(100, input, 0)
-    println(result1) //1000 is too low, 3214 is too high
+    println(result1)
 
     val result2 = {
         val octopusCount: Int = input.height * input.width
