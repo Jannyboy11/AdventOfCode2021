@@ -64,6 +64,6 @@ def go2(line: Line, expect: Expect): Long = step(line, expect) match {
             .sorted
         scores(scores.length / 2)
     }
-    println(result2) //29184309 too low
+    println(result2)
 
 }
