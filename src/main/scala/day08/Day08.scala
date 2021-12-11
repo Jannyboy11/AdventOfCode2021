@@ -37,7 +37,7 @@ extension [A] (set: Set[A])
         val six = patterns.find(set => set.size == 6 && set.containsAll(five) && set.contains(e)).get
         val zero = patterns.find(set => set.size == 6 && set.contains(e) && set != six).get
 
-        val number = outputs.map(d => Seq(zero, one, two, three, four, five, six, seven, eight, nine).zipWithIndex.find { case (digit, i) => digit == d } .get._2)
+        val number = outputs.map(d => Seq(zero, one, two, three, four, five, six, seven, eight, nine).zipWithIndex.find { case (digit, i) => digit == d }.get._2)
         computeNumber(number)
     }.sum
     println(result2)
