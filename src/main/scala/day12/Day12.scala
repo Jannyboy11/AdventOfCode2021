@@ -58,13 +58,12 @@ def explore1(graph: Graph, from: Node, currentPath: Path, paths: Set[Path]): Set
     var ps = paths
     for (to <- graph(from)) {
         val smallCave = isSmall(to)
-        if (smallCave && currentPath.seen(to)) {
-            //dead end -- continue
-        } else if (to == "end") {
-            ps += (currentPath + to)
-        } else {
-            val p = explore1(graph, to, currentPath + to, ps)
-            ps ++= p
+        if (!(smallCave && currentPath.seen(to))) {
+            if (to == "end") {
+                ps += (currentPath + to)
+            } else {
+                ps ++= explore1(graph, to, currentPath + to, ps)
+            }
         }
     }
     ps
@@ -74,15 +73,13 @@ def explore2(graph: Graph, from: Node, currentPath: Path, paths: Set[Path]): Set
     var ps = paths
     for (to <- graph(from)) {
         val smallCave = isSmall(to)
-        if (smallCave && currentPath.seen(to)) {
-            //dead end -- continue
-        } else if (to == "end") {
-            ps ++= (currentPath * to)
-        } else {
-            val newPaths = currentPath * to
-            for (newPath <- newPaths) {
-                val p = explore2(graph, to, newPath, ps)
-                ps ++= p
+        if (!(smallCave && currentPath.seen(to))) {
+            if (to == "end") {
+                ps ++= (currentPath * to)
+            } else {
+                for (newPath <- currentPath * to) {
+                    ps ++= explore2(graph, to, newPath, ps)
+                }
             }
         }
     }
