@@ -56,7 +56,7 @@ def step(octopuses: Octopuses): (Octopuses, Int) = {
             flashes = newFlashes
         }
     }
-    for (p <- flashes){
+    for (p <- flashes) {
         newOctopuses = newOctopuses.updated(p, 0)
     }
     //newOctopuses.prettyPrint()

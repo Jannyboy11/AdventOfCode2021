@@ -1,9 +1,10 @@
 package day10
 
+import scala.annotation.tailrec
 import scala.io.Source
 
 val source = Source.fromResource("day10.in")
-val input = source.getLines().toSeq.map(_.toList.asInstanceOf[List[Brace]])
+val input = source.getLines().toSeq.map(_.toList.asInstanceOf[Line])
 
 type Open = '(' | '[' | '{' | '<'
 type Close = ')' | ']' | '}' | '>'
@@ -42,13 +43,13 @@ def step(line: Line, expect: Expect): Either[Int, (Line, Expect)] = (line, expec
     case ((corrupt: Close) :: _, _) => Left(corruptPoints(corrupt))
 }
 
-def go1(line: Line, expect: Expect): Int = step(line, expect) match {
+@tailrec def go1(line: Line, expect: Expect): Int = step(line, expect) match {
     case Right((Nil, _)) => 0
     case Right((remaining, expected)) => go1(remaining, expected)
     case Left(points) => points
 }
 
-def go2(line: Line, expect: Expect): Long = step(line, expect) match {
+@tailrec def go2(line: Line, expect: Expect): Long = step(line, expect) match {
     case Right((Nil, expect)) => completionScore(expect)
     case Right((remaining, expected)) => go2(remaining, expected)
 }
