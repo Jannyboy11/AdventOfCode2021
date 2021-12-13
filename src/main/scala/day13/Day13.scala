@@ -1,6 +1,5 @@
 package day13;
 
-import scala.collection.mutable.ArrayBuffer
 import scala.io.Source
 
 val source = Source.fromResource("day13.in")
@@ -31,17 +30,17 @@ def foldAlongY(at: Int, paper: Paper): Paper = paper.map {
     case p@Point(x, y) => if y > at then Point(x, at - (y - at)) else p
 }
 
-def go(paper: Paper, fold: Fold): Paper = fold match {
+def fold(paper: Paper, fold: Fold): Paper = fold match {
     case FoldX(at) => foldAlongX(at, paper)
     case FoldY(at) => foldAlongY(at, paper)
 }
 
 @main def main: Unit = {
 
-    val result1 = go(paper, folds.head).size
+    val result1 = fold(paper, folds.head).size
     println(result1)
 
-    val foldedPaper = folds.foldLeft(paper)(go)
+    val foldedPaper = folds.foldLeft(paper)(fold)
     val (maxX, maxY) = foldedPaper.foldLeft((0, 0)) { case ((mX, mY), Point(x, y)) => (Math.max(mX, x), Math.max(mY, y)) }
     for (y <- 0 to maxY) {
         for (x <- 0 to maxX)
