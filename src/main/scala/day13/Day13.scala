@@ -10,7 +10,7 @@ val paper: Paper = lines.takeWhile(_.nonEmpty).map(row => {
     Point(x.toInt, y.toInt)
 }).toSet
 
-val pattern = """fold along ([xy])=(\d+)""".r("foldAlong", "number")
+val pattern = """fold along ([xy])=(\d+)""".r("axis", "at")
 val folds: List[Fold] = lines.map[Fold] {
     case pattern("x", number) => FoldX(number.toInt)
     case pattern("y", number) => FoldY(number.toInt)
@@ -23,17 +23,17 @@ case class FoldY(y: Int)
 type Paper = Set[Point]
 type Fold = FoldX | FoldY
 
-def foldAlongX(along: Int, paper: Paper): Paper = paper.map {
-    case p@Point(x, y) => if x > along then Point(along - (x - along), y) else p
+def foldAlongX(at: Int, paper: Paper): Paper = paper.map {
+    case Point(x, y) => if x > at then Point(at - (x - at), y) else p
 }
 
-def foldAlongY(along: Int, paper: Paper): Paper = paper.map {
-    case p@Point(x, y) => if y > along then Point(x, along - (y - along)) else p
+def foldAlongY(at: Int, paper: Paper): Paper = paper.map {
+    case Point(x, y) => if y > at then Point(x, at - (y - at)) else p
 }
 
 def go(paper: Paper, fold: Fold): Paper = fold match
-    case FoldX(along) => foldAlongX(along, paper)
-    case FoldY(along) => foldAlongY(along, paper)
+    case FoldX(at) => foldAlongX(at, paper)
+    case FoldY(at) => foldAlongY(at, paper)
 
 @main def main: Unit = {
 
