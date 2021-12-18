@@ -1,4 +1,4 @@
-package day13;
+package day13
 
 import scala.io.Source
 
