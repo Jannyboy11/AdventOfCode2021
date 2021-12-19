@@ -15,7 +15,7 @@ extension [Elem] (grid: Grid[Elem])
     def apply(point: Point): Elem = grid(point.y)(point.x)
     def height = grid.length
     def width = grid.head.length
-    def bottomRight: Point = Point(grid(0).length - 1, grid.length - 1)
+    def bottomRight: Point = Point(width - 1, height - 1)
     def updated(point: Point, value: Elem): Grid[Elem] = grid.updated(point.y, grid(point.y).updated(point.x, value))
     def fmap[B](f: Elem => B): Grid[B] = grid.map(_.map(f))
 
@@ -33,12 +33,7 @@ def dijkstra(source: Point, ownCosts: Grid[RiskLevel]): TotalRiskLevels = {
     val Q = new java.util.PriorityQueue[Point](java.util.Comparator.comparingInt[Point](p => dist(p)))
 
     dist.put(source, 0)
-
-    for x <- 0 until grid.width do
-        for y <- 0 until grid.height do
-            val v = Point(x, y)
-            if v.equals(source) /*'!=' does not work here, weird!*/ then
-                Q.add(v)
+    Q.add(source)
 
     while !Q.isEmpty do
         val u = Q.poll()
@@ -70,8 +65,7 @@ def flattenGrid[Elem](g: Grid[Grid[Elem]]): Grid[Elem] =
     println(result1)
 
     val result2 = {
-        val grids = IndexedSeq.tabulate(5, 5)((y, x) => grid.fmap(level => (level + x + y - 1) % 9 + 1))
-        val newGrid = flattenGrid(grids)
+        val newGrid = flattenGrid(IndexedSeq.tabulate(5, 5)((y, x) => grid.fmap(level => (level + x + y - 1) % 9 + 1)))
         val costs = dijkstra(Point(0, 0), newGrid)
         costs(newGrid.bottomRight)
     }
