@@ -51,7 +51,7 @@ def concatRight[Elem](left: Grid[Elem], right: Grid[Elem]): Grid[Elem] =
     left.zip(right).map((row1, row2) => row1 ++ row2)
 
 def concatBelow[Elem](upper: Grid[Elem], lower: Grid[Elem]): Grid[Elem] =
-    concatRight(upper.transpose, lower.transpose).transpose
+    upper ++ lower
 
 def flattenGrid[Elem](g: Grid[Grid[Elem]]): Grid[Elem] =
     g.map(rowOfGrids => rowOfGrids.reduce(concatRight)).reduce(concatBelow)
