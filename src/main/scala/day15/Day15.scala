@@ -1,7 +1,5 @@
 package day15
 
-import com.sun.management.VMOption.Origin
-
 import scala.io.Source
 
 val source = Source.fromResource("day15.in")
@@ -20,13 +18,6 @@ extension [Elem] (grid: Grid[Elem])
     def bottomRight: Point = Point(grid(0).length - 1, grid.length - 1)
     def updated(point: Point, value: Elem): Grid[Elem] = grid.updated(point.y, grid(point.y).updated(point.x, value))
     def fmap[B](f: Elem => B): Grid[B] = grid.map(_.map(f))
-
-extension (grid: Grid[RiskLevel])
-    def prettyPrint(): Unit =
-        for row <- grid do
-            for c <- row do
-                print(c)
-            println()
 
 def adjacent(point: Point, maxX: Int, maxY: Int): Seq[Point] =
     Seq(
@@ -81,9 +72,9 @@ def flattenGrid[Elem](g: Grid[Grid[Elem]]): Grid[Elem] =
     val result2 = {
         val grids = IndexedSeq.tabulate(5, 5)((y, x) => grid.fmap(level => (level + x + y - 1) % 9 + 1))
         val newGrid = flattenGrid(grids)
-        //newGrid.prettyPrint()
         val costs = dijkstra(Point(0, 0), newGrid)
         costs(newGrid.bottomRight)
     }
     println(result2)
+
 }
