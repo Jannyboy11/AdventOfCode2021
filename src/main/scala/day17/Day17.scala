@@ -19,41 +19,43 @@ object Probe:
 def step(probe: Probe): Probe = {
     val newPosX = probe.posX + probe.velX
     val newPosY = probe.posY + probe.velY
-    val newVelX =
-        if probe.velX > 1 then probe.velX - 1
-        else if probe.velX < 1 then probe.velX + 1
-        else 0
+    val newVelX = if probe.velX > 0 then probe.velX - 1 else if probe.velX < 0 then probe.velX + 1 else 0
     val newVelY = probe.velY - 1
     Probe(newPosX, newPosY, newVelX, newVelY)
 }
 
-def trajectory(probe: Probe, lowestAllowedY: Int): LazyList[Probe] =
-    LazyList.iterate(probe)(step).takeWhile(p => p.posY >= lowestAllowedY)
-
-enum Attempt:
-    case Hit(maxPosY: Int)
-    case Miss
-
-def attempt(probe: Probe, target: Area): Attempt = {
-    val path = trajectory(probe, target.minY)
-    val Probe(posX, posY, _, _) = path.last
-
-    if target.contains(posX, posY) then
-        Attempt.Hit(path.map(_.posY).max)
-    else
-        Attempt.Miss
+def simulate(probe: Probe, target: Area): Option[Int] = {
+    var p = probe
+    var maxY = 0
+    while (p.posX <= target.maxX && p.posY >= target.minY) {
+        maxY = Math.max(maxY, p.posY)
+        if (target.contains(p.posX, p.posY))
+            return Some(maxY)
+        p = step(p)
+    }
+    None
 }
 
 def go(target: Area): (Int, Int) = {
     var maxPosY = 0
     var count = 0
 
-    for velX <- 0 to target.maxX; velY <- (target.minY-1) to 1000 do
-        attempt(Probe(velX, velY), targetArea) match
-            case Attempt.Hit(highestY) =>
-                maxPosY = math.max(maxPosY, highestY)
-                count += 1
-            case Attempt.Miss => ()
+    var velX = 0
+    var velY = target.minY
+
+    while (velX <= target.maxX) {
+        while (velY <= 2000) {
+            simulate(Probe(velX, velY), target) match
+                case Some(highestY) =>
+                    maxPosY = math.max(maxPosY, highestY)
+                    count += 1
+                case None =>
+                    ()
+            velY += 1
+        }
+        velX += 1
+        velY = target.minY
+    }
 
     (maxPosY, count)
 }
@@ -62,6 +64,6 @@ def go(target: Area): (Int, Int) = {
 
     val (result1, result2) = go(targetArea)
     println(result1)
-    println(result2)    //3545 too low? what am I doing wrong?
+    println(result2)
 
 }
