@@ -39,7 +39,6 @@ object Decoder {
             case 5 => TypeId.GreaterThen
             case 6 => TypeId.LessThen
             case 7 => TypeId.EqualTo
-            case _ => TypeId.UnknownOperator
         (typeId, rest)
     }
 
@@ -126,7 +125,6 @@ enum TypeId:
     case GreaterThen
     case LessThen
     case EqualTo
-    case UnknownOperator
 
 enum OperatorMode:
     case CountBits
@@ -155,12 +153,12 @@ def eval2(packet: Packet): Long = packet match {
             case TypeId.LessThen => values => if values(0) < values(1) then 1L else 0L
             case TypeId.EqualTo => values => if values(0) == values(1) then 1L else 0L
         f(operands.map(eval2))
-
 }
 
 @main def main: Unit = {
 
     val (packet, remainder) = Decoder.layer.decode(inputBits)
+
     val result1 = eval1(packet)
     println(result1)
 
