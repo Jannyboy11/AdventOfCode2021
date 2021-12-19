@@ -144,7 +144,7 @@ def eval1(packet: Packet): Int = packet match {
 def eval2(packet: Packet): Long = packet match {
     case Packet.Layer(_, TypeId.Literal, Seq(Packet.LiteralValue(number))) => number
     case Packet.Layer(_, operatorId, Seq(Packet.Operator(_, _, operands))) =>
-        def f: Seq[Long] => Long = operatorId match
+        val f: Seq[Long] => Long = operatorId match
             case TypeId.Sum => _.sum
             case TypeId.Product => _.product
             case TypeId.Minimum => _.min
