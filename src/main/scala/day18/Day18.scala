@@ -3,7 +3,7 @@ package day18
 import scala.io.Source
 
 val source = Source.fromResource("day18.in")
-val input: Seq[Flat.SnailfishNumber] = source.getLines().map(Flat.SnailfishNumber.parse).toSeq
+val input: Seq[Flat.SnailfishNumber] = source.getLines().map(Flat.parse).toSeq
 
 object Flat {
 
@@ -11,19 +11,11 @@ object Flat {
         case Open
         case Number(value: Int)
         case Close
-
-        override def toString: String = this match
-            case Open => "["
-            case Number(value) => Integer.toString(value)
-            case Close => "]"
     }
 
     type SnailfishNumber = Seq[C]
 
     extension (base: SnailfishNumber) {
-        def prettyPrint(): Unit = {
-            println(base.mkString(" "))
-        }
         def replace(at: Index, `with`: C): SnailfishNumber = {
             val (left, right) = base.splitAt(at)
             left ++ Seq(`with`) ++ right.tail
@@ -38,13 +30,11 @@ object Flat {
         }
     }
 
-    object SnailfishNumber {
-        def parse(string: String): SnailfishNumber = string.flatMap[C] {
-            case '[' => Seq(C.Open)
-            case ']' => Seq(C.Close)
-            case ',' => Seq()
-            case d if d.isDigit => Seq(C.Number(d - '0'))
-        }
+    def parse(string: String): SnailfishNumber = string.flatMap[C] {
+        case '[' => Seq(C.Open)
+        case ']' => Seq(C.Close)
+        case ',' => Seq()
+        case d if d.isDigit => Seq(C.Number(d - '0'))
     }
 
     type Index = Int
@@ -88,7 +78,6 @@ object Flat {
             if (depth > 4) {
                 return Some(index)
             }
-
             index += 1
         }
         None
@@ -111,15 +100,13 @@ object Flat {
             result = result.replace(rightIndex, C.Number(y + right))
         }
 
-        val res = result.removed(explodePoint, 4)
+        result.removed(explodePoint, 4)
             .insert(explodePoint, Seq(C.Number(0)))
-
-        res
     }
 
-    def add(one: SnailfishNumber, two: SnailfishNumber): SnailfishNumber =
+    def add(one: SnailfishNumber, two: SnailfishNumber): SnailfishNumber = {
         reduce(Seq(C.Open) ++ one ++ two ++ Seq(C.Close))
-
+    }
 }
 
 object Tree {
@@ -127,10 +114,6 @@ object Tree {
     enum SFN {
         case Digit(value: Int)
         case Pair(x: SFN, y: SFN)
-
-        override def toString: String = this match
-            case SFN.Digit(value) => s"$value"
-            case SFN.Pair(x, y) => s"[ $x $y ]"
     }
 
     def fromFlat(flat: Flat.SnailfishNumber): SFN = {
@@ -175,10 +158,10 @@ object Tree {
 
     val result2 = {
         var max = 0
-        for (sns1 <- input) {
-            for (sn2 <- input) {
-                if (sns1 != sn2) {
-                    val magnitude = Tree.magnitude(Tree.fromFlat(Flat.add(sns1, sn2)))
+        for (snf1 <- input) {
+            for (snf2 <- input) {
+                if (snf1 != snf2) {
+                    val magnitude = Tree.magnitude(Tree.fromFlat(Flat.add(snf1, snf2)))
                     max = Math.max(max, magnitude)
                 }
             }
@@ -186,4 +169,5 @@ object Tree {
         max
     }
     println(result2)
+
 }
