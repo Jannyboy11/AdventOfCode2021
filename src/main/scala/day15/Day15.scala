@@ -13,8 +13,8 @@ case class Point(x: Int, y: Int)
 
 extension [Elem] (grid: Grid[Elem])
     def apply(point: Point): Elem = grid(point.y)(point.x)
-    def height = grid.length
-    def width = grid.head.length
+    def height: Int = grid.length
+    def width: Int = grid.head.length
     def bottomRight: Point = Point(width - 1, height - 1)
     def updated(point: Point, value: Elem): Grid[Elem] = grid.updated(point.y, grid(point.y).updated(point.x, value))
     def fmap[B](f: Elem => B): Grid[B] = grid.map(_.map(f))
@@ -65,7 +65,8 @@ def flattenGrid[Elem](g: Grid[Grid[Elem]]): Grid[Elem] =
     println(result1)
 
     val result2 = {
-        val newGrid = flattenGrid(IndexedSeq.tabulate(5, 5)((y, x) => grid.fmap(level => (level + x + y - 1) % 9 + 1)))
+        val grids = IndexedSeq.tabulate(5, 5)((y, x) => grid.fmap(level => (level + x + y - 1) % 9 + 1))
+        val newGrid = flattenGrid(grids)
         val costs = dijkstra(Point(0, 0), newGrid)
         costs(newGrid.bottomRight)
     }

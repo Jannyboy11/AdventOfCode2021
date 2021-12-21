@@ -1,6 +1,5 @@
 package day16
 
-import java.util.Formattable
 import scala.io.Source
 
 val source = Source.fromResource("day16.in")
@@ -23,12 +22,12 @@ trait Decoder[A]:
     def decode(bits: Bits): (A, Bits)
 
 object Decoder {
-    val version: Decoder[Version] = bits => {
+    private val version: Decoder[Version] = bits => {
         val (vBits, rest) = bits.splitAt(3)
         (toInt(vBits), rest)
     }
 
-    val typeId: Decoder[TypeId] = bits => {
+    private val typeId: Decoder[TypeId] = bits => {
         val (idBits, rest) = bits.splitAt(3)
         val typeId = toInt(idBits) match
             case 4 => TypeId.Literal
@@ -55,12 +54,12 @@ object Decoder {
         (Packet.LiteralValue(toLong(numberBits)), remainder)
     }
 
-    val operatorMode: Decoder[OperatorMode] = bits => bits.head match {
+    private val operatorMode: Decoder[OperatorMode] = bits => bits.head match {
         case 0 => (OperatorMode.CountBits, bits.tail)
         case 1 => (OperatorMode.CountPackets, bits.tail)
     }
 
-    def operatorLength(operatorMode: OperatorMode): Decoder[Int] = bits => operatorMode match {
+    private def operatorLength(operatorMode: OperatorMode): Decoder[Int] = bits => operatorMode match {
         case OperatorMode.CountBits =>
             val (lengthBits, remainder) = bits.splitAt(15)
             (toInt(lengthBits), remainder)
@@ -76,7 +75,7 @@ object Decoder {
         (Packet.Operator(mode, length, arguments), r3)
     }
 
-    def layerContents(typeId: TypeId): Decoder[Seq[Packet]] = bits => typeId match {
+    private def layerContents(typeId: TypeId): Decoder[Seq[Packet]] = bits => typeId match {
         case TypeId.Literal =>
             val (pLiteralValue, remainder) = literalValue.decode(bits)
             (Seq(pLiteralValue), remainder)
@@ -92,7 +91,7 @@ object Decoder {
         (Packet.Layer(ver, tid, pacs), r3)
     }
 
-    def operands(mode: OperatorMode, length: Int): Decoder[Seq[Packet]] = bits => mode match {
+    private def operands(mode: OperatorMode, length: Int): Decoder[Seq[Packet]] = bits => mode match {
         case OperatorMode.CountBits =>
             val (operandBits, r1) = bits.splitAt(length)
             var remainingBits = operandBits
@@ -111,7 +110,6 @@ object Decoder {
                 remainingBits = bitsAfterPacket
             (seqBuilder.toSeq, remainingBits)
     }
-
 }
 
 type Version = Int
