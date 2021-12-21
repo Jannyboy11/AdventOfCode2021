@@ -136,9 +136,6 @@ object Tree {
                 val (x, Seq(',', r1: _*)) = parse(r0.asInstanceOf[Seq[C | ',']])
                 val (y, Seq(C.Close, r2: _*)) = parse(r1.asInstanceOf[Seq[C | ',']])
                 (Pair(x, y), r2.asInstanceOf[Seq[C | ',']])
-            case lol =>
-                println("input = " + lol.mkString(" "))
-                throw new MatchError(lol)
         }
 
         val (res, Nil) = parse(reify(flat))
